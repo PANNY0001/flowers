@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 5 Monthsary 💙</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-blue: #5dade2;
+            --soft-blue: #87ceeb;
+            --light-blue: #bde0fe;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom, #87ceeb, #bde0fe);
+            overflow-x: hidden;
+            text-align: center;
+            color: white;
+            min-height: 100vh;
+        }
+
+        /* Improved Hearts */
+        .heart {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            transform: rotate(45deg);
+            animation: fall linear infinite;
+            z-index: 1;
+        }
+        .heart:before, .heart:after {
+            content: "";
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: inherit; /* Inherits color from parent */
+        }
+        .heart:before { top: -8px; left: 0; }
+        .heart:after { left: -8px; top: 0; }
+
+        @keyframes fall {
+            0% { top: -10%; opacity: 1; transform: rotate(45deg) translateX(0); }
+            100% { top: 110%; opacity: 0; transform: rotate(45deg) translateX(50px); }
+        }
+
+        /* Stars */
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
+        }
+        @keyframes twinkle { from { opacity: 0.2; } to { opacity: 1; } }
+
+        .shooting {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            box-shadow: 0 0 10px white;
+            animation: shoot 5s infinite;
+        }
+        @keyframes shoot {
+            0% { top: -10%; left: -10%; opacity: 1; }
+            20% { top: 40%; left: 60%; opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        /* Main UI */
+        .container {
+            position: relative;
+            z-index: 2;
+            padding: 40px 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        p { font-size: 0.9rem; opacity: 0.9; }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            margin: 20px 0;
+            background: white;
+            color: var(--primary-blue);
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        button:hover { transform: scale(1.05); background: #f0f0f0; }
+
+        /* Memory Game */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .card {
+            aspect-ratio: 1/1;
+            background: white;
+            color: var(--soft-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: transform 0.3s, background 0.3s;
+            user-select: none;
+        }
+
+        .card.hidden {
+            background: var(--primary-blue);
+            color: transparent !important;
+        }
+
+        .card:active { transform: scale(0.9); }
+
+        .messageBox {
+            display: none;
+            margin-top: 20px;
+            animation: fadeIn 1s;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        video {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 15px;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Placeholder for Music -->
+    <audio id="bgMusic" loop>
+        <source src="Paul Partohap.mp3" type="audio/mpeg">
+    </audio>
+
+    <canvas id="fireworks"></canvas>
+
+    <div class="container">
+        <div class="glass-panel">
+            <h1>Happy 5 Monthsary My Love 💙</h1>
+            <p>Every second with you is a dream come true ✨</p>
+
+            <button onclick="reveal()">Click for Surprise 💌</button>
+
+            <div class="messageBox" id="msgBox">
+                <p>I’m so grateful for you every single day. Thank you for loving me for 5 beautiful months. I love you endlessly 💙</p>
+                <!-- Replace with your video link or local file -->
+                <video controls>
+                    <source src="videoplayback.mp4" type="video/mp4">
+                </video>
+            </div>
+        </div>
+
+        <div class="glass-panel" style="margin-top: 20px;">
+            <h2 style="margin: 0;">Memory Game 💙</h2>
+            <p>Match all pairs to light up the sky 🎆</p>
+            <div class="grid" id="grid"></div>
+            <p id="winMessage" style="display:none; color: gold; font-weight: bold; margin-top: 10px;">You did it! I love you! 🎇</p>
+        </div>
+    </div>
+
+    <script>
+        // Start music on first interaction
+        document.body.addEventListener("click", () => {
+            const music = document.getElementById("bgMusic");
+            music.play().catch(() => { /* handle auto-play block */ });
+        }, { once: true });
+
+        // Generate Hearts
+        const heartColors = ["#ffffff", "#3498db", "#a2d2ff", "#f0f8ff"];
+        for (let i = 0; i < 25; i++) {
+            let heart = document.createElement("div");
+            heart.className = "heart";
+            heart.style.background = heartColors[Math.floor(Math.random() * heartColors.length)];
+            heart.style.left = Math.random() * 100 + "%";
+            heart.style.animationDuration = (4 + Math.random() * 6) + "s";
+            heart.style.animationDelay = Math.random() * 5 + "s";
+            document.body.appendChild(heart);
+        }
+
+        // Generate Stars
+        for (let i = 0; i < 80; i++) {
+            let star = document.createElement("div");
+            star.className = "star";
+            star.style.top = Math.random() * 100 + "%";
+            star.style.left = Math.random() * 100 + "%";
+            star.style.animationDelay = Math.random() * 2 + "s";
+            document.body.appendChild(star);
+        }
+
+        // Shooting Star
+        function createShootingStar() {
+            let shoot = document.createElement("div");
+            shoot.className = "shooting";
+            shoot.style.left = "-10%";
+            shoot.style.top = Math.random() * 50 + "%";
+            document.body.appendChild(shoot);
+            setTimeout(() => shoot.remove(), 5000);
+        }
+        setInterval(createShootingStar, 8000);
+
+        // Reveal Surprise
+        function reveal() {
+            document.getElementById("msgBox").style.display = "block";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Memory Game Logic
+        const emojis = ["💙", "💜", "✨", "🌟", "🌙", "☁️", "🧸", "💍"];
+        let cards = [...emojis, ...emojis];
+        cards.sort(() => 0.5 - Math.random());
+
+        const grid = document.getElementById("grid");
+        let firstCard = null, secondCard = null, lockBoard = false, matchedCount = 0;
+
+        cards.forEach(symbol => {
+            let card = document.createElement("div");
+            card.className = "card hidden";
+            card.textContent = symbol;
+            card.onclick = () => {
+                if (lockBoard || card === firstCard || !card.classList.contains("hidden")) return;
+                
+                card.classList.remove("hidden");
+
+                if (!firstCard) {
+                    firstCard = card;
+                    return;
+                }
+
+                secondCard = card;
+                lockBoard = true;
+
+                if (firstCard.textContent === secondCard.textContent) {
+                    matchedCount++;
+                    resetTurn();
+                    if (matchedCount === emojis.length) {
+                        document.getElementById("winMessage").style.display = "block";
+                        startFireworks();
+                    }
+                } else {
+                    setTimeout(() => {
+                        firstCard.classList.add("hidden");
+                        secondCard.classList.add("hidden");
+                        resetTurn();
+                    }, 800);
+                }
+            };
+            grid.appendChild(card);
+        });
+
+        function resetTurn() {
+            [firstCard, secondCard] = [null, null];
+            lockBoard = false;
+        }
+
+        // Enhanced Fireworks
+        const canvas = document.getElementById("fireworks");
+        const ctx = canvas.getContext("2d");
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function startFireworks() {
+            const duration = 5000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                if (Date.now() < end) {
+                    createExplosion();
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        function createExplosion() {
+            if (Math.random() > 0.1) return; 
+            let x = Math.random() * canvas.width;
+            let y = Math.random() * (canvas.height / 2);
+            let color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+            for (let i = 0; i < 30; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    dx: (Math.random() - 0.5) * 6,
+                    dy: (Math.random() - 0.5) * 6,
+                    radius: Math.random() * 3,
+                    color: color,
+                    opacity: 1
+                });
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, i) => {
+                p.x += p.dx;
+                p.y += p.dy;
+                p.dy += 0.05; // Gravity
+                p.opacity -= 0.01;
+                ctx.globalAlpha = p.opacity;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                if (p.opacity <= 0) particles.splice(i, 1);
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
